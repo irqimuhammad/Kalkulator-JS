@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator by Irqi Muhammad Fakhrezi (1710624130)</title>
+
+    <!-- Bagian ini untuk memanggil library Tailwind CSS agar tampilan lebih modern dan responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Bagian ini memanggil font "Inter" dari Google Fonts agar teks tampak rapi -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Mengatur font utama untuk seluruh halaman */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Efek animasi kecil saat tombol ditekan */
+        .btn-calc {
+            transition: all 0.1s ease-in-out;
+        }
+        .btn-calc:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen flex items-center justify-center p-4">
+
+    <!-- Container utama kalkulator -->
+    <div class="w-full max-w-sm bg-gray-800 rounded-2xl shadow-2xl p-6 space-y-4 border border-gray-700">
+
+        <!-- Bagian ini menampilkan gambar status kalkulator -->
+        <div>
+            <img id="statusImage" 
+                 src="https://placehold.co/400x100/374151/E5E7EB?text=Kalkulator+Irqi+Muhammad+Fakhrezi+%7C+1710624130" 
+                 alt="Status Kalkulator"
+                 class="w-full rounded-lg transition-all duration-300 ease-in-out shadow-inner">
+        </div>
+
+        <!-- Bagian layar tempat menampilkan angka atau hasil perhitungan -->
+        <div class="bg-gray-900 rounded-lg p-4 shadow-inner">
+            <input type="text" id="display" 
+                   class="w-full bg-transparent text-right text-5xl font-mono text-white border-0 outline-none p-2" 
+                   readonly 
+                   placeholder="0">
+        </div>
+
+        <!-- Bagian tombol-tombol kalkulator dalam bentuk grid -->
+        <div class="grid grid-cols-4 gap-3">
+            <!-- Baris tombol pertama -->
+            <button data-value="C" class="btn-calc text-2xl font-bold bg-red-600 hover:bg-red-500 rounded-lg p-5 shadow-md text-white">C</button>
+            <button data-value="DEL" class="btn-calc text-2xl font-bold bg-gray-600 hover:bg-gray-500 rounded-lg p-5 shadow-md text-white">DEL</button>
+            <button data-value="%" class="btn-calc text-2xl font-bold bg-gray-600 hover:bg-gray-500 rounded-lg p-5 shadow-md text-white">%</button>
+            <button data-value="/" class="btn-calc text-2xl font-bold bg-blue-600 hover:bg-blue-500 rounded-lg p-5 shadow-md text-white">/</button>
+
+            <!-- Baris kedua -->
+            <button data-value="7" class="btn-calc text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">7</button>
+            <button data-value="8" class="btn-calc text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">8</button>
+            <button data-value="9" class="btn-calc text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">9</button>
+            <button data-value="*" class="btn-calc text-2xl font-bold bg-blue-600 hover:bg-blue-500 rounded-lg p-5 shadow-md text-white">*</button>
+
+            <!-- Baris ketiga -->
+            <button data-value="4" class="btn-calc text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">4</button>
+            <button data-value="5" class="btn-calc text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">5</button>
+            <button data-value="6" class="btn-calc text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">6</button>
+            <button data-value="-" class="btn-calc text-2xl font-bold bg-blue-600 hover:bg-blue-500 rounded-lg p-5 shadow-md text-white">-</button>
+
+            <!-- Baris keempat -->
+            <button data-value="1" class="btn-calc text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">1</button>
+            <button data-value="2" class="btn-calc text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">2</button>
+            <button data-value="3" class="btn-calc text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">3</button>
+            <button data-value="+" class="btn-calc text-2xl font-bold bg-blue-600 hover:bg-blue-500 rounded-lg p-5 shadow-md text-white">+</button>
+
+            <!-- Baris terakhir -->
+            <button data-value="0" class="btn-calc col-span-2 text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">0</button>
+            <button data-value="." class="btn-calc text-2xl font-bold bg-gray-700 hover:bg-gray-600 rounded-lg p-5 shadow-md text-white">.</button>
+            <button data-value="=" class="btn-calc text-2xl font-bold bg-green-600 hover:bg-green-500 rounded-lg p-5 shadow-md text-white">=</button>
+        </div>
+    </div>
+
+    <script>
+        // Kodingan ini menjalankan kalkulator setelah halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Mengambil elemen penting: layar kalkulator, gambar status, dan semua tombol
+            const display = document.getElementById('display');
+            const statusImage = document.getElementById('statusImage');
+            const buttons = document.querySelectorAll('.btn-calc');
+
+            // Menyiapkan tiga gambar untuk status kalkulator (normal, sukses, error)
+            const imgNormal = 'https://placehold.co/400x100/374151/E5E7EB?text=Kalkulator+Irqi';
+            const imgSuccess = 'https://placehold.co/400x100/16A34A/FFFFFF?text=Sukses!';
+            const imgError = 'https://placehold.co/400x100/DC2626/FFFFFF?text=Error!';
+
+            // Fungsi untuk mengganti gambar status
+            function changeImage(state) {
+                if (state === 'success') {
+                    statusImage.src = imgSuccess;
+                } else if (state === 'error') {
+                    statusImage.src = imgError;
+                } else {
+                    statusImage.src = imgNormal;
+                }
+            }
+
+            // Menghapus seluruh isi layar kalkulator
+            function clearDisplay() {
+                display.value = '';
+                changeImage('normal');
+            }
+
+            // Menghapus satu karakter terakhir dari layar
+            function deleteLastChar() {
+                display.value = display.value.slice(0, -1);
+            }
+
+            // Menambahkan angka/simbol ke layar kalkulator
+            function appendToDisplay(value) {
+                display.value += value;
+            }
+
+            // Menghitung hasil perhitungan yang ada di layar
+            function calculateResult() {
+                if (display.value === '') {
+                    changeImage('error');
+                    display.value = 'Kosong!';
+                    setTimeout(clearDisplay, 1500);
+                    return;
+                }
+
+                try {
+                    // eval digunakan untuk mengeksekusi ekspresi matematika
+                    let result = eval(display.value.replace(/%/g, '/100'));
+                    if (isFinite(result)) {
+                        display.value = result;
+                        changeImage('success');
+                    } else {
+                        throw new Error("Hasil tidak valid");
+                    }
+                } catch (error) {
+                    display.value = 'Error';
+                    changeImage('error');
+                    setTimeout(clearDisplay, 1500);
+                }
+            }
+
+            // Menangani klik tombol-tombol kalkulator
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const value = button.getAttribute('data-value');
+                    switch(value) {
+                        case 'C':
+                            clearDisplay();
+                            break;
+                        case 'DEL':
+                            deleteLastChar();
+                            break;
+                        case '=':
+                            calculateResult();
+                            break;
+                        default:
+                            if (statusImage.src === imgSuccess || statusImage.src === imgError) {
+                                clearDisplay();
+                            }
+                            appendToDisplay(value);
+                            break;
+                    }
+                });
+            });
+
+            // Menambahkan fungsi input lewat keyboard
+            document.addEventListener('keydown', (e) => {
+                const key = e.key;
+                if (key >= '0' && key <= '9' || key === '.' || key === '+' || key === '-' || key === '*' || key === '/' || key === '%') {
+                    appendToDisplay(key);
+                    e.preventDefault();
+                } else if (key === 'Enter' || key === '=') {
+                    calculateResult();
+                    e.preventDefault();
+                } else if (key === 'Backspace') {
+                    deleteLastChar();
+                    e.preventDefault();
+                } else if (key === 'Escape' || key.toLowerCase() === 'c') {
+                    clearDisplay();
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
